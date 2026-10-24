@@ -13,14 +13,14 @@ const [first, ...rest] = business.phone.split(" ");
 
 <!-- The number is the headline of the page's last screen: the van door, set in type. -->
 <section id="enquire" class="on-paper bg-paper text-ink-dark mt-section frame py-16 md:py-24" aria-labelledby="enquire-title">
-  <h2 id="enquire-title" class="rise text-lead font-medium max-w-[30ch]">
-    Water where it shouldn't be? Call us, any hour.
+  <h2 id="enquire-title" class="rise text-lead font-medium">
+    <span class="block">Water where it shouldn't be?</span> Call us, any hour.
   </h2>
 
   <a
     href={business.phoneHref}
     data-call-location="contact"
-    class="rise rise-2 group mt-8 md:mt-10 block display tabular-nums whitespace-nowrap text-[23vw] md:text-[13.6vw] leading-[0.85] transition-colors duration-200 hover:text-soft-dark"
+    class="rise rise-2 group mt-8 md:mt-10 block display tabular-nums whitespace-nowrap text-[23vw] md:text-[13.6vw] leading-[0.85] transition-colors duration-200 hover:text-soft-dark active:text-soft-dark"
     aria-label={`Call ${business.phone}`}
   >
     <span class="block md:inline">{first}</span>{" "}<span class="block md:inline">{rest.join(" ")}</span>
@@ -41,7 +41,7 @@ const [first, ...rest] = business.phone.split(" ");
       class="md:col-start-6 md:col-span-7"
       novalidate={false}
     >
-      <div data-fields class="grid gap-x-5 gap-y-5 sm:grid-cols-2">
+      <div data-fields class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
         <label class="flex flex-col gap-2">
           <span class="font-medium">Your name</span>
           <input name="name" required maxlength="80" autocomplete="name" class="field" />
@@ -73,12 +73,12 @@ const [first, ...rest] = business.phone.split(" ");
         </div>
         <input type="hidden" name="page" value={Astro.url.pathname} />
         <div class="sm:col-span-2 flex flex-wrap items-center gap-x-6 gap-y-3">
-          <button type="submit" class="btn btn-dark min-w-48 data-[busy]:opacity-70">Send enquiry</button>
-          <p data-status aria-live="polite" class="text-body"></p>
+          <button type="submit" class="btn btn-dark w-full sm:w-auto sm:min-w-48 data-[busy]:opacity-70">Send enquiry</button>
+          <p data-status aria-live="polite" class="text-body data-[state=error]:text-invalid"></p>
         </div>
       </div>
 
-      <div data-done hidden tabindex="-1" class="outline-none">
+      <div data-done hidden tabindex="-1" class="done outline-none">
         <p class="display text-head" data-done-name>Thanks.</p>
         <p class="mt-5 text-lead max-w-[36ch]">
           We've got your enquiry and we'll ring you back within the hour. Your reference is <span data-done-ref class="font-medium"></span>.
@@ -94,13 +94,42 @@ const [first, ...rest] = business.phone.split(" ");
 <style>
   @reference "../styles/global.css";
   .field {
-    @apply min-h-13 w-full bg-white px-4 text-body text-ink-dark border-2 border-paper-2 outline-none transition-colors duration-150;
+    @apply min-h-13 w-full bg-white px-4 text-body text-ink-dark border-2 border-paper-2 outline-none;
+    transition: border-color 150ms var(--ease-out-quart);
   }
+  @media (hover: hover) and (pointer: fine) {
+    .field:hover {
+      @apply border-[#bdb8b0];
+    }
+  }
+  /* Red only once the person has left the field or pressed Send, never while they type. */
+  .field:user-invalid {
+    @apply border-invalid;
+  }
+  label:has(.field:user-invalid) > span:first-child {
+    @apply text-invalid;
+  }
+  /* Focus wins over red, so you can always see where you're typing. */
   .field:focus {
     @apply border-ink-dark;
   }
-  .field:user-invalid {
-    @apply border-[#a3341f];
+  /* The thank-you settles in rather than snapping over the form. */
+  .done:not([hidden]) {
+    transition:
+      opacity 360ms var(--ease-out-quart),
+      transform 360ms var(--ease-out-quart);
+    @starting-style {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .done:not([hidden]) {
+      transform: none;
+      @starting-style {
+        transform: none;
+      }
+    }
   }
 </style>
 

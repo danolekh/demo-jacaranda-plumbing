@@ -26,7 +26,8 @@ for (const form of document.querySelectorAll<HTMLFormElement>("form[data-enquiry
     const data = new FormData(form);
     button.disabled = true;
     button.dataset.busy = "";
-    status.textContent = "Sending...";
+    status.textContent = "Sending…";
+    delete status.dataset.state;
 
     try {
       const response = await fetch(form.action, {
@@ -54,6 +55,7 @@ for (const form of document.querySelectorAll<HTMLFormElement>("form[data-enquiry
       status.textContent = "";
     } catch (error) {
       track("form_error", { form_id: formId, reason: "network" });
+      status.dataset.state = "error";
       status.textContent = "That didn't send. Please call us instead, the number is just above.";
       button.disabled = false;
     } finally {

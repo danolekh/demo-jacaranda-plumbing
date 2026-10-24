@@ -8,26 +8,81 @@ const links = [
 ];
 ---
 
-<header class="frame relative z-10 flex items-center justify-between gap-6 pt-5 md:pt-7 text-body">
-  <a href="/" class="font-medium" aria-label={`${business.name}, home`}>{business.name}</a>
+<!-- z-30: above the hero's own layer, so the open phone menu sits over the headline, not under it. -->
+<header class="frame relative z-30 flex items-center justify-between gap-6 pt-5 md:pt-7 text-body">
+  <a href="/" class="link no-underline font-medium" aria-label={`${business.name}, home`}>{business.name}</a>
 
   <nav class="hidden md:flex items-center gap-7" aria-label="Main">
     {links.map((l) => <a class="link no-underline hover:underline" href={l.href}>{l.label}</a>)}
-    <a class="link font-medium" href={business.phoneHref} data-call-location="header">{business.phone}</a>
+    <a class="link font-medium tabular-nums" href={business.phoneHref} data-call-location="header">{business.phone}</a>
   </nav>
 
-  <!-- On phones the links fold behind one word. <details> needs no script. -->
-  <details class="md:hidden group relative">
-    <summary class="list-none cursor-pointer py-2 pl-4 font-medium [&::-webkit-details-marker]:hidden">
+  <!-- On phones the links fold behind one word. <details> needs no script; the few lines below
+       only close it after a tap, on Escape or on a tap outside. -->
+  <details class="menu md:hidden group relative" data-menu>
+    <summary class="list-none cursor-pointer select-none -my-1 py-3 pl-6 -mr-1 pr-1 font-medium transition-opacity duration-150 active:opacity-60 [&::-webkit-details-marker]:hidden">
       <span class="group-open:hidden">Menu</span><span class="hidden group-open:inline">Close</span>
     </summary>
     <nav
-      class="absolute right-0 top-full z-20 mt-2 w-60 bg-surface p-5 flex flex-col gap-4 text-lead"
+      class="menu-panel absolute right-0 top-full z-20 mt-1 w-64 bg-surface px-5 py-3 flex flex-col text-lead"
       aria-label="Main"
     >
-      {links.map((l) => <a href={l.href}>{l.label}</a>)}
-      <a href="/tracking/">Tracking</a>
-      <a class="text-brass font-medium" href={business.phoneHref} data-call-location="menu">{business.phone}</a>
+      {links.map((l) => <a class="menu-link" href={l.href}>{l.label}</a>)}
+      <a class="menu-link" href="/tracking/">Tracking</a>
+      <a class="menu-link mt-2 text-brass font-medium tabular-nums" href={business.phoneHref} data-call-location="menu">{business.phone}</a>
     </nav>
   </details>
 </header>
+
+<style>
+  .menu-link {
+    display: flex;
+    align-items: center;
+    min-height: 2.875rem;
+    transition: color 150ms var(--ease-out-quart);
+  }
+  .menu-link:active {
+    color: var(--color-soft);
+  }
+  /* The panel grows out of the word that opened it, top right. Opening is a rare, deliberate
+     tap, so it gets a short entrance; closing is instant. */
+  @media (prefers-reduced-motion: no-preference) {
+    .menu[open] .menu-panel {
+      transform-origin: top right;
+      animation: menu-in 180ms var(--ease-out-quart);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu[open] .menu-panel {
+      animation: menu-fade 120ms ease;
+    }
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.97);
+    }
+  }
+  @keyframes menu-fade {
+    from {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>("details[data-menu]");
+  if (menu) {
+    const close = () => (menu.open = false);
+    menu.querySelectorAll("nav a").forEach((a) => a.addEventListener("click", close));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu.open) {
+        close();
+        menu.querySelector("summary")?.focus();
+      }
+    });
+    document.addEventListener("click", (e) => {
+      if (menu.open && !menu.contains(e.target as Node)) close();
+    });
+  }
+</script>

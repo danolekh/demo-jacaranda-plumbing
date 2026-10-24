@@ -54,7 +54,7 @@ const { rows, title = ["What it", "usually costs"], photo } = Astro.props;
         rows.map((r) => (
           <tr class="even:bg-surface max-md:grid max-md:grid-cols-[1fr_auto] max-md:gap-x-4 max-md:px-3 max-md:py-3">
             <th scope="row" class="font-medium md:px-3 md:py-3.5 max-md:col-start-1">{r.job}</th>
-            <td class="text-soft md:px-3 md:py-3.5 max-md:col-start-1 max-md:row-start-2">{r.includes}</td>
+            <td class="text-soft md:px-3 md:py-3.5 max-md:col-start-1 max-md:col-span-2 max-md:row-start-2 max-md:mt-0.5">{r.includes}</td>
             <td class="text-soft md:px-3 md:py-3.5 max-md:hidden">{r.when}</td>
             <td class="font-medium tabular-nums text-right whitespace-nowrap md:px-3 md:py-3.5 max-md:col-start-2 max-md:row-start-1">{r.price}</td>
           </tr>

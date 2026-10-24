@@ -34,8 +34,8 @@ const example = `window.dataLayer.push({
       </p>
       <div class="mt-8 flex flex-col sm:flex-row sm:items-center gap-x-7 gap-y-4">
         <a class="btn self-start" href={business.phoneHref} data-call-location="tracking_page">Tap to call {business.phone}</a>
-        <a class="link self-start" href="/#enquire">Send a test enquiry</a>
-        <a class="link self-start" href="/#suburbs">Check a suburb</a>
+        <a class="link self-start sm:self-center" href="/#enquire">Send a test enquiry</a>
+        <a class="link self-start sm:self-center" href="/#suburbs">Check a suburb</a>
       </div>
     </section>
 
@@ -56,9 +56,9 @@ const example = `window.dataLayer.push({
 
     <section class="frame pt-section" aria-labelledby="events-title">
       <h2 id="events-title" class="display text-head">The events</h2>
-      <div class="mt-10 overflow-x-auto">
-        <table class="w-full min-w-[44rem] border-collapse text-left">
-          <thead>
+      <div class="mt-10 md:overflow-x-auto">
+        <table class="w-full md:min-w-[44rem] border-collapse text-left">
+          <thead class="max-md:sr-only">
             <tr class="text-small text-soft">
               <th scope="col" class="font-normal px-3 pb-3">Event</th>
               <th scope="col" class="font-normal px-3 pb-3">Fires when</th>
@@ -69,11 +69,11 @@ const example = `window.dataLayer.push({
           <tbody>
             {
               events.map((e) => (
-                <tr class="even:bg-surface align-top">
-                  <th scope="row" class="px-3 py-3.5 font-medium"><code>{e.name}</code></th>
-                  <td class="px-3 py-3.5">{e.when}</td>
-                  <td class="px-3 py-3.5 text-soft">{e.params}</td>
-                  <td class="px-3 py-3.5 text-soft">{e.ga4}</td>
+                <tr class="even:bg-surface align-top max-md:flex max-md:flex-col max-md:gap-1 max-md:px-3 max-md:py-4">
+                  <th scope="row" class="md:px-3 md:py-3.5 font-medium"><code>{e.name}</code></th>
+                  <td class="md:px-3 md:py-3.5">{e.when}</td>
+                  <td class="md:px-3 md:py-3.5 text-soft max-md:text-small"><span class="md:hidden">Parameters: </span>{e.params}</td>
+                  <td class="md:px-3 md:py-3.5 text-soft max-md:text-small"><span class="md:hidden">In GA4 and Ads: </span>{e.ga4}</td>
                 </tr>
               ))
             }
