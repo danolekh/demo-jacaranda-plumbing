@@ -13,7 +13,14 @@ if (root) {
   const minutes = (row: HTMLElement) => Number(row.dataset.minutes);
   let lastTracked = "";
 
-  const clean = (value: string) => value.trim().toLowerCase().replace(/\s+/g, " ");
+  // "Ashgrove QLD 4060" and "ashgrove, qld" both mean Ashgrove.
+  const clean = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/,/g, " ")
+      .replace(/\b(qld|queensland|\d{4})\b/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
   const calm = matchMedia("(prefers-reduced-motion: reduce)");
 
   // A new answer settles in (opacity and a few pixels), so the change reads as a reply, not a flicker.

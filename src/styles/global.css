@@ -77,7 +77,12 @@
   h3 {
     text-wrap: balance;
   }
-  p {
+  /* Monospace sets large next to Cabinet Grotesk; inline code drops a step to sit in the line. */
+  code {
+    font-size: 0.875em;
+  }
+  p,
+  figcaption {
     text-wrap: pretty;
   }
   ::selection {
