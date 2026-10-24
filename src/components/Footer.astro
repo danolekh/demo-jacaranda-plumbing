@@ -10,7 +10,7 @@ const year = 2026;
 
   <div class="mt-16 md:mt-18 grid gap-12 md:grid-cols-12">
     <ul class="md:col-span-5 flex flex-col gap-2 text-[clamp(1.625rem,1.3rem+0.9vw,2.25rem)] leading-tight font-medium text-brass">
-      <li><a class="hover:text-brass-strong" href={business.phoneHref} data-call-location="footer">{business.phone}</a></li>
+      <li><a class="tabular-nums transition-colors duration-150 hover:text-brass-strong active:text-brass-strong" href={business.phoneHref} data-call-location="footer">{business.phone}</a></li>
       <li>{business.base}, {business.city}</li>
       <li>Open 24/7</li>
     </ul>
@@ -31,7 +31,7 @@ const year = 2026;
           <li><a class="link no-underline hover:underline" href="/tracking/">Tracking</a></li>
         </ul>
       </div>
-      <div>
+      <div class="col-span-2 sm:col-span-1">
         <h2 class="text-soft">Licensed</h2>
         <ul class="mt-3 flex flex-col gap-2">
           <li>{business.licence}</li>
@@ -42,12 +42,12 @@ const year = 2026;
   </div>
 
   <div class="mt-20 md:mt-24 flex flex-col md:flex-row md:items-end md:justify-between gap-6 text-small text-soft">
-    <div class="max-w-[60ch] flex flex-col gap-2">
+    <div class="max-w-[48ch] flex flex-col gap-2">
       <p>
         A sample built by Daniil Olekh to show what a new trade website could look like. {business.name}, its phone number, licence and prices are made up. Hidden from search engines and removed on request.
       </p>
       <p>
-        Photos from Wikimedia Commons:
+        Photos from Wikimedia Commons:{" "}
         {credits.map((c, i) => (
           <>
             <a class="link" href={c.page} rel="noopener">{c.title}</a> by {c.creator}, {c.licence}{i < credits.length - 1 ? "; " : "."}

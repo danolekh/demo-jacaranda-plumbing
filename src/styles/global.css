@@ -41,6 +41,7 @@
   --color-paper-2: #dcd9d3;
   --color-ink-dark: #0c0a08;
   --color-soft-dark: #5a544d;
+  --color-invalid: #a3341f;
 
   /* Five sizes do all the work. */
   --text-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
@@ -76,7 +77,12 @@
   h3 {
     text-wrap: balance;
   }
-  p {
+  /* Monospace sets large next to Cabinet Grotesk; inline code drops a step to sit in the line. */
+  code {
+    font-size: 0.875em;
+  }
+  p,
+  figcaption {
     text-wrap: pretty;
   }
   ::selection {
@@ -89,6 +95,19 @@
   }
   .on-paper :focus-visible {
     outline-color: var(--color-ink-dark);
+  }
+  /* Every control has its own pressed state, so the grey tap flash on phones only gets in the way. */
+  a,
+  button,
+  summary,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Suburb fields suggest from a datalist as you type; Chrome's grey arrow on them is noise. */
+  input[list]::-webkit-calendar-picker-indicator {
+    display: none !important;
   }
   @media (prefers-reduced-motion: no-preference) {
     html {
@@ -119,21 +138,26 @@
     line-height: 1.1;
     background: var(--color-brass);
     color: var(--color-ink-dark);
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
     transition:
       background-color 160ms var(--ease-out-quart),
+      opacity 160ms var(--ease-out-quart),
       transform 160ms var(--ease-out-quart);
   }
-  .btn:hover {
+  .btn:active:not(:disabled) {
+    transform: scale(0.97);
     background: var(--color-brass-strong);
   }
-  .btn:active {
-    transform: scale(0.97);
+  .btn:disabled {
+    cursor: progress;
   }
   .btn-dark {
     background: var(--color-ink-dark);
     color: var(--color-paper);
   }
-  .btn-dark:hover {
+  .btn-dark:active:not(:disabled) {
     background: #2a241e;
   }
   .link {
@@ -142,30 +166,46 @@
     text-underline-offset: 0.2em;
     transition: color 160ms var(--ease-out-quart);
   }
-  .link:hover {
+  .link:active {
     color: var(--color-brass);
   }
-  .on-paper .link:hover {
+  .on-paper .link:active {
     color: var(--color-soft-dark);
+  }
+  /* Hover only where there is a pointer that hovers; a tap on a phone shouldn't leave it lit. */
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover:not(:disabled) {
+      background: var(--color-brass-strong);
+    }
+    .btn-dark:hover:not(:disabled) {
+      background: #2a241e;
+    }
+    .link:hover {
+      color: var(--color-brass);
+    }
+    .on-paper .link:hover {
+      color: var(--color-soft-dark);
+    }
   }
 }
 
 /* Entrances: each part of a section rises once as it scrolls in (src/scripts/reveal.ts adds
-   .in). Only when the script runs and motion is welcome; otherwise everything just shows. */
+   .in). Only when the script runs and motion is welcome; otherwise everything just shows.
+   Short and small on purpose: the page should be readable by the time the thumb stops. */
 @media (prefers-reduced-motion: no-preference) {
   .js .rise {
     transition:
-      opacity 700ms var(--ease-out-quart),
-      transform 700ms var(--ease-out-quart);
+      opacity 520ms var(--ease-out-quart),
+      transform 520ms var(--ease-out-quart);
   }
   .js .rise:not(.in) {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(16px);
   }
   .js .rise-2 {
-    transition-delay: 80ms;
+    transition-delay: 60ms;
   }
   .js .rise-3 {
-    transition-delay: 160ms;
+    transition-delay: 120ms;
   }
 }

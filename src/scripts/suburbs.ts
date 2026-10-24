@@ -13,13 +13,33 @@ if (root) {
   const minutes = (row: HTMLElement) => Number(row.dataset.minutes);
   let lastTracked = "";
 
-  const clean = (value: string) => value.trim().toLowerCase().replace(/\s+/g, " ");
+  // "Ashgrove QLD 4060" and "ashgrove, qld" both mean Ashgrove.
+  const clean = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/,/g, " ")
+      .replace(/\b(qld|queensland|\d{4})\b/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  const calm = matchMedia("(prefers-reduced-motion: reduce)");
+
+  // A new answer settles in (opacity and a few pixels), so the change reads as a reply, not a flicker.
+  function say(text: string) {
+    if (answer.textContent === text) return;
+    answer.textContent = text;
+    if (text && answer.animate) {
+      answer.animate(
+        calm.matches ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: "translateY(4px)" }, { opacity: 1, transform: "none" }],
+        { duration: 220, easing: "cubic-bezier(0.25, 1, 0.5, 1)" },
+      );
+    }
+  }
 
   function show(final: boolean) {
     const value = clean(input.value);
     for (const row of rows.values()) row.removeAttribute("data-match");
     if (value.length < 3) {
-      answer.textContent = "";
+      say("");
       return;
     }
 
@@ -27,7 +47,7 @@ if (root) {
     if (row) {
       row.setAttribute("data-match", "");
       const name = row.dataset.suburb;
-      answer.textContent = `Yes, we cover ${name}. It's about ${minutes(row)} minutes from our Ashgrove base, so most jobs there are same day.`;
+      say(`Yes, we cover ${name}. It's about ${minutes(row)} minutes from our Ashgrove base, so most jobs there are same day.`);
       if (lastTracked !== value) {
         lastTracked = value;
         track("suburb_check", { suburb: name, serviced: true });
@@ -37,10 +57,10 @@ if (root) {
 
     const partial = [...rows.keys()].some((name) => name.startsWith(value));
     if (partial && !final) {
-      answer.textContent = "";
+      say("");
       return;
     }
-    answer.textContent = `${input.value.trim()} isn't on our usual list, but give us a ring. Within about 30 minutes of Ashgrove we'll usually still come.`;
+    say(`${input.value.trim()} isn't on our usual list, but give us a ring. Within about 30 minutes of Ashgrove we'll usually still come.`);
     if (final && lastTracked !== value) {
       lastTracked = value;
       track("suburb_check", { suburb: input.value.trim(), serviced: false });

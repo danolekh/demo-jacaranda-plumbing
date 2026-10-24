@@ -13,10 +13,10 @@ import { serviceList } from "../data/site";
             href={s.href}
             class="group grid lg:grid-cols-[1fr_auto] items-baseline gap-x-8 py-2 md:py-1"
           >
-            <span class="display text-head transition-[color,translate] duration-300 ease-out-quart group-hover:text-brass group-hover:translate-x-3 group-focus-visible:text-brass">
+            <span class="display text-head transition-[color,translate] duration-200 ease-out-quart group-hover:text-brass group-focus-visible:text-brass group-active:text-brass motion-safe:group-hover:translate-x-3 motion-safe:group-focus-visible:translate-x-3">
               {s.name}
             </span>
-            <span class="hidden lg:block text-lead text-soft">{s.note}</span>
+            <span class="block mt-1 lg:mt-0 lg:text-lead text-soft">{s.note}</span>
           </a>
         </li>
       ))

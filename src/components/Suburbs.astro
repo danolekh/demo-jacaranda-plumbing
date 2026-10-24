@@ -24,7 +24,7 @@ import { photos } from "../data/photos";
               list="suburb-options"
               autocomplete="address-level2"
               placeholder="Type your suburb"
-              class="min-w-0 flex-1 bg-ground text-ink placeholder:text-soft px-4 h-13 text-body border-2 border-ground focus:border-brass outline-none"
+              class="min-w-0 flex-1 bg-ground text-ink caret-brass placeholder:text-soft px-4 h-13 text-body border-2 border-ground transition-[border-color] duration-150 ease-out-quart hover:border-[#3a332b] focus:border-brass outline-none"
             />
             <button type="submit" class="btn shrink-0">Check</button>
           </div>
@@ -45,10 +45,10 @@ import { photos } from "../data/photos";
                   <li
                     data-suburb={s.name}
                     data-minutes={s.minutes}
-                    class="flex items-baseline justify-between gap-6 min-h-11 md:min-h-9 py-1.5 px-2 -mx-2 transition-colors duration-300 data-[match]:bg-brass data-[match]:text-ink-dark"
+                    class="flex items-baseline justify-between gap-6 min-h-9 py-1 px-2 -mx-2 transition-colors duration-200 ease-out-quart data-[match]:bg-brass data-[match]:text-ink-dark"
                   >
                     <span class="flex items-center gap-2">
-                      <span aria-hidden="true" class="size-2 rounded-full bg-brass in-data-[match]:bg-ink-dark" />
+                      <span aria-hidden="true" class="size-2 rounded-full bg-soft in-data-[match]:bg-ink-dark" />
                       {s.name}
                     </span>
                     <span class="text-small tabular-nums text-soft in-data-[match]:text-ink-dark">about {s.minutes} min</span>
