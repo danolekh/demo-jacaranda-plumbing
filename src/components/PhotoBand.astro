@@ -1,0 +1,65 @@
+---
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+  caption: string;
+  id?: string;
+  /** The statement set beside the picture. */
+  heading: string;
+  statement: string;
+  flip?: boolean;
+}
+
+const { image, alt, caption, heading, statement, flip = false, id } = Astro.props;
+---
+
+<!-- A large picture as relief from the type, with one statement in a narrow column beside it. -->
+<section id={id} class="frame pt-section" aria-labelledby={`${id ?? "band"}-title`}>
+  <div class:list={["grid gap-8 lg:gap-12 lg:grid-cols-12 items-end", flip && "lg:[&>figure]:order-2"]}>
+    <figure class="rise lg:col-span-7 overflow-hidden">
+      <Picture
+        src={image}
+        alt={alt}
+        widths={[480, 800, 1200, 1600]}
+        sizes="(min-width: 1024px) 58vw, 100vw"
+        formats={["avif", "webp"]}
+          quality={58}
+        class="w-full aspect-[4/3] object-cover photo-drift"
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption class="mt-3 text-small text-soft">{caption}</figcaption>
+    </figure>
+    <div class:list={["lg:col-span-5 lg:pb-10", flip ? "lg:pr-8" : "lg:pl-4"]}>
+      <h2 id={`${id ?? "band"}-title`} class="rise text-lead font-medium text-brass">{heading}</h2>
+      <p class="rise rise-2 mt-5 text-[clamp(1.5rem,1.1rem+1.2vw,2.25rem)] leading-[1.2] font-medium max-w-[30ch]">
+        {statement}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* One moving picture: the photograph drifts a little as it passes through the screen. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .photo-drift {
+        animation: drift linear both;
+      }
+      .photo-drift.photo-drift {
+        animation-timeline: view();
+      }
+    }
+  }
+  @keyframes drift {
+    from {
+      transform: scale(1.12) translateY(-3%);
+    }
+    to {
+      transform: scale(1.02) translateY(3%);
+    }
+  }
+</style>

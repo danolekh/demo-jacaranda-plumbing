@@ -1,0 +1,18 @@
+---
+import Base from "../layouts/Base.astro";
+import TopBar from "../components/TopBar.astro";
+import { business } from "../data/site";
+---
+
+<Base title={`Page not found | ${business.name}`} description="That page isn't here." enquire="/#enquire">
+  <main class="min-h-[80svh]">
+    <TopBar />
+    <section class="frame pt-24 md:pt-36" aria-labelledby="nf-title">
+      <h1 id="nf-title" class="display text-head">That pipe goes nowhere.</h1>
+      <p class="mt-6 text-lead max-w-[36ch]">
+        The page you wanted isn't here. <a class="link" href="/">Back to the home page</a>, or call
+        <a class="link" href={business.phoneHref} data-call-location="not_found">{business.phone}</a>.
+      </p>
+    </section>
+  </main>
+</Base>

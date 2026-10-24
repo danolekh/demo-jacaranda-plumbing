@@ -1,0 +1,10 @@
+# Cloudflare Pages project. `wrangler pages deploy` reads this for the bindings;
+# with the Git integration, Pages builds `pnpm build` and serves ./dist.
+name = "demo-jacaranda-plumbing"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-10-01"
+
+# Enquiries (kept 30 days) and the call/lead counters behind /tracking.
+[[kv_namespaces]]
+binding = "JP_KV"
+id = "795bb7d2448a429bb27c205c632ea296"

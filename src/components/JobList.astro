@@ -1,0 +1,48 @@
+---
+import { Picture } from "astro:assets";
+import type { Service } from "../data/site";
+import { photos } from "../data/photos";
+
+interface Props {
+  service: Service;
+}
+
+const { service } = Astro.props;
+---
+
+<!-- The jobs this page covers as two-ended rows, with the picture closing the right half. -->
+<section id="jobs" class="frame pt-section" aria-labelledby="jobs-title">
+  <div class="grid gap-12 md:grid-cols-12 items-start">
+    <div class="md:col-span-6 lg:col-span-5 lg:col-start-2">
+      <h2 id="jobs-title" class="rise display text-head">{service.hook}</h2>
+      <p class="rise rise-2 mt-6 max-w-[42ch]">{service.lead}</p>
+      <ul class="rise rise-3 mt-10">
+        {
+          service.jobs.map((job) => (
+            <li class="flex items-baseline justify-between gap-6 min-h-11 md:min-h-9 py-1.5">
+              <span class="flex items-center gap-2">
+                <span aria-hidden="true" class="size-2 shrink-0 rounded-full bg-brass" />
+                {job.name}
+              </span>
+              <span class="text-small text-soft text-right">{job.value}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <figure class="md:col-span-6 md:col-start-7 lg:col-start-8 lg:col-span-5">
+      <Picture
+        src={photos[service.photo]}
+        alt={service.photoAlt}
+        widths={[480, 800, 1100]}
+        sizes="(min-width: 768px) 42vw, 100vw"
+        formats={["avif", "webp"]}
+        quality={58}
+        class="w-full aspect-[4/5] object-cover"
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption class="mt-3 text-small text-soft">{service.photoCaption}</figcaption>
+    </figure>
+  </div>
+</section>

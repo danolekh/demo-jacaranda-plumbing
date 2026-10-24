@@ -1,0 +1,63 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import ServiceList from "../components/ServiceList.astro";
+import PhotoBand from "../components/PhotoBand.astro";
+import Suburbs from "../components/Suburbs.astro";
+import Steps from "../components/Steps.astro";
+import PriceTable from "../components/PriceTable.astro";
+import Faq from "../components/Faq.astro";
+import Contact from "../components/Contact.astro";
+import { business, prices, homeFaq } from "../data/site";
+import { photos } from "../data/photos";
+---
+
+<Base
+  title={`Plumber Brisbane 24/7 | Hot water, blocked drains, gas | ${business.name}`}
+  description="Brisbane plumbers and gasfitters on call 24/7 across the north and west: hot water systems, blocked drains, gas fitting and leaks, with a fixed price before we start."
+>
+  <main>
+    <Hero
+      word="jacaranda"
+      h1="Brisbane plumbers, on call 24/7."
+      lead="Hot water, blocked drains, gas fitting and leaks across the north and west, with a fixed price before we start."
+    />
+    <ServiceList />
+    <PhotoBand
+      id="roots"
+      image={photos.jacaranda}
+      alt="Jacaranda trees in full purple bloom in New Farm Park, with Brisbane's city towers behind"
+      caption="Jacarandas in New Farm Park, in October."
+      heading="Why drains block here"
+      statement="In older Brisbane suburbs, most blocked drains are tree roots in clay pipes."
+    />
+    <Suburbs />
+    <Steps />
+    <PhotoBand
+      id="camera"
+      flip
+      image={photos.drainMachine}
+      alt="A plumber feeding a drain machine cable into a sewer access point"
+      caption="Clearing a sewer line with a drain machine."
+      heading="Camera first"
+      statement="We put a camera down every blocked drain before we quote, and the footage is yours to keep."
+    />
+    <PriceTable
+      rows={prices}
+      photo={{
+        image: photos.copperTorch,
+        alt: "A blue torch flame soldering a joint on a copper pipe",
+        caption: "Soldering a copper joint.",
+      }}
+    />
+    <Faq
+      keys={homeFaq}
+      photo={{
+        image: photos.lagPoster,
+        alt: "A 1940s British poster of a woman wrapping a hot water tank, with the words Lag to keep heat in",
+        caption: "Lag to keep heat in: a wartime poster from Britain's Ministry of Fuel and Power.",
+      }}
+    />
+    <Contact formId="home" />
+  </main>
+</Base>

@@ -1,0 +1,81 @@
+---
+import "../styles/global.css";
+import { business, suburbGroups } from "../data/site";
+import Footer from "../components/Footer.astro";
+import CallBar from "../components/CallBar.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Where the sticky bar's Enquire link goes. Pages without the form point home. */
+  enquire?: string;
+}
+
+const { title, description, enquire = "#enquire" } = Astro.props;
+
+// LocalBusiness data for Google: the trade, the phone, the hours and every suburb served.
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Plumber",
+  name: business.name,
+  telephone: business.phone,
+  url: business.url,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: business.base,
+    addressRegion: business.region,
+    addressCountry: "AU",
+  },
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    opens: "00:00",
+    closes: "23:59",
+  },
+  areaServed: suburbGroups.flatMap((g) => g.suburbs.map((s) => ({ "@type": "City", name: `${s.name} QLD` }))),
+};
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <!-- A demo: kept out of search engines here, in robots.txt and in the X-Robots-Tag header. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0c0a08" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="en_AU" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/cabinet-grotesk-400.woff2" as="font" type="font/woff2" crossorigin />
+    <script is:inline>document.documentElement.classList.add("js"); window.dataLayer = window.dataLayer || [];</script>
+    {
+      business.gtmId && (
+        <script is:inline define:vars={{ id: business.gtmId }}>
+          (function (w, d, s, l, i) {
+            w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+            var f = d.getElementsByTagName(s)[0], j = d.createElement(s);
+            j.async = true;
+            j.src = "https://www.googletagmanager.com/gtm.js?id=" + i;
+            f.parentNode.insertBefore(j, f);
+          })(window, document, "script", "dataLayer", id);
+        </script>
+      )
+    }
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+  <body id="top" class="min-h-svh bg-ground text-ink pb-20 md:pb-0">
+    <slot />
+    <Footer />
+    <CallBar enquire={enquire} />
+    <script>
+      import "../scripts/track";
+      import "../scripts/reveal";
+      import "../scripts/callbar";
+    </script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+---
+import { Picture } from "astro:assets";
+import { suburbGroups } from "../data/site";
+import { photos } from "../data/photos";
+---
+
+<!-- Two-ended rows: the suburb at the left, the drive time from Ashgrove at the right.
+     The checker above the list is the one thing to do on this page besides calling. -->
+<section id="suburbs" class="frame pt-section" aria-labelledby="suburbs-title">
+  <div class="grid gap-12 md:grid-cols-12">
+    <div class="md:col-span-6 lg:col-span-5 lg:col-start-2">
+      <h2 id="suburbs-title" class="rise display text-head">Where we work</h2>
+      <p class="rise rise-2 mt-6 max-w-[40ch]">
+        Brisbane's north and west, from our base in Ashgrove. Times are the usual drive, not counting the school run.
+      </p>
+
+      <div data-suburb-check class="rise rise-3 mt-10 bg-surface p-5 md:p-6">
+        <form class="flex flex-col gap-3" role="search" aria-label="Check your suburb">
+          <label for="suburb-input" class="font-medium">Do you come to my suburb?</label>
+          <div class="flex">
+            <input
+              id="suburb-input"
+              name="suburb"
+              list="suburb-options"
+              autocomplete="address-level2"
+              placeholder="Type your suburb"
+              class="min-w-0 flex-1 bg-ground text-ink placeholder:text-soft px-4 h-13 text-body border-2 border-ground focus:border-brass outline-none"
+            />
+            <button type="submit" class="btn shrink-0">Check</button>
+          </div>
+          <datalist id="suburb-options">
+            {suburbGroups.flatMap((g) => g.suburbs).map((s) => <option value={s.name} />)}
+          </datalist>
+        </form>
+        <p data-answer aria-live="polite" class="mt-4 empty:mt-0 text-lead leading-snug font-medium text-brass"></p>
+      </div>
+
+      <div class="mt-12">
+        {
+          suburbGroups.map((group) => (
+            <div class="mt-10 first:mt-0">
+              <h3 class="text-body text-soft">{group.name}</h3>
+              <ul class="mt-2">
+                {group.suburbs.map((s) => (
+                  <li
+                    data-suburb={s.name}
+                    data-minutes={s.minutes}
+                    class="flex items-baseline justify-between gap-6 min-h-11 md:min-h-9 py-1.5 px-2 -mx-2 transition-colors duration-300 data-[match]:bg-brass data-[match]:text-ink-dark"
+                  >
+                    <span class="flex items-center gap-2">
+                      <span aria-hidden="true" class="size-2 rounded-full bg-brass in-data-[match]:bg-ink-dark" />
+                      {s.name}
+                    </span>
+                    <span class="text-small tabular-nums text-soft in-data-[match]:text-ink-dark">about {s.minutes} min</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <figure class="md:col-span-6 md:col-start-7 lg:col-start-8 lg:col-span-5">
+      <div class="md:sticky md:top-8">
+        <Picture
+          src={photos.queenslander}
+          alt="A white two-storey Queenslander with wide verandas and a picket fence in Brisbane"
+          widths={[480, 800, 1100]}
+          sizes="(min-width: 768px) 42vw, 100vw"
+          formats={["avif", "webp"]}
+          quality={58}
+          class="w-full aspect-[4/5] object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption class="mt-3 text-small text-soft">
+          A Queenslander in Brisbane. Under most of them: galvanised pipes and clay sewer lines.
+        </figcaption>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<script>
+  import "../scripts/suburbs";
+</script>

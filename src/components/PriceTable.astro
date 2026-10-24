@@ -1,0 +1,68 @@
+---
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import type { Price } from "../data/site";
+
+interface Props {
+  rows: Price[];
+  title?: [string, string];
+  photo?: { image: ImageMetadata; alt: string; caption: string };
+}
+
+const { rows, title = ["What it", "usually costs"], photo } = Astro.props;
+---
+
+<!-- A real table, no lines: alternate rows take one step of tone instead. -->
+<section id="prices" class="frame pt-section" aria-labelledby="prices-title">
+  <div class="grid gap-8 md:grid-cols-12 items-end">
+    <h2 id="prices-title" class="rise display text-head md:col-span-8 md:grid md:grid-cols-8">
+      <span class="block md:col-span-8">{title[0]}</span>
+      <span class="block md:col-start-3 md:col-span-6">{title[1]}</span>
+    </h2>
+    {
+      photo && (
+        <figure class="rise rise-2 md:col-start-9 md:col-span-4">
+          <Picture
+            src={photo.image}
+            alt={photo.alt}
+            widths={[400, 640, 900]}
+            sizes="(min-width: 768px) 32vw, 100vw"
+            formats={["avif", "webp"]}
+            quality={58}
+            class="w-full aspect-[3/2] object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption class="mt-3 text-small text-soft">{photo.caption}</figcaption>
+        </figure>
+      )
+    }
+  </div>
+
+  <table class="rise rise-2 mt-12 md:mt-18 w-full border-collapse text-left">
+    <caption class="sr-only">Typical prices, including GST</caption>
+    <thead class="max-md:sr-only">
+      <tr class="text-small text-soft">
+        <th scope="col" class="font-normal px-3 pb-3 w-[34%]">Job</th>
+        <th scope="col" class="font-normal px-3 pb-3 w-[33%]">What's included</th>
+        <th scope="col" class="font-normal px-3 pb-3">When</th>
+        <th scope="col" class="font-normal px-3 pb-3 text-right">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r) => (
+          <tr class="even:bg-surface max-md:grid max-md:grid-cols-[1fr_auto] max-md:gap-x-4 max-md:px-3 max-md:py-3">
+            <th scope="row" class="font-medium md:px-3 md:py-3.5 max-md:col-start-1">{r.job}</th>
+            <td class="text-soft md:px-3 md:py-3.5 max-md:col-start-1 max-md:row-start-2">{r.includes}</td>
+            <td class="text-soft md:px-3 md:py-3.5 max-md:hidden">{r.when}</td>
+            <td class="font-medium tabular-nums text-right whitespace-nowrap md:px-3 md:py-3.5 max-md:col-start-2 max-md:row-start-1">{r.price}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  <p class="mt-6 max-w-[60ch] text-soft">
+    Prices include GST. We always confirm a fixed price on site before any work starts, and you decide whether we go ahead.
+  </p>
+</section>

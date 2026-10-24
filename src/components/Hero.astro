@@ -1,0 +1,86 @@
+---
+import TopBar from "./TopBar.astro";
+import { business } from "../data/site";
+
+interface Props {
+  /** The one word cropped across the lower half of the screen. */
+  word: string;
+  h1: string;
+  lead: string;
+}
+
+const { word, h1, lead } = Astro.props;
+---
+
+<!-- First screen: words, colour and space only. The word is too big for the screen on purpose. -->
+<section class="hero relative overflow-hidden min-h-svh md:min-h-[max(100svh,44rem)]">
+  <TopBar />
+  <div class="frame relative z-10 pt-10 md:pt-16 max-w-[66%] md:max-w-none">
+    <h1 class="text-[1.5rem] md:text-head font-extrabold leading-[1.1] md:leading-[0.95] tracking-[-0.01em] md:tracking-[-0.035em]">{h1}</h1>
+    <p class="mt-4 md:mt-5 max-w-[34ch]">{lead}</p>
+    <div class="mt-8 flex flex-col md:flex-row md:items-center gap-x-7 gap-y-4">
+      <a class="btn self-start" href={business.phoneHref} data-call-location="hero">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
+        Call {business.phone}
+      </a>
+      <a class="link self-start" href="#enquire">Or send an enquiry</a>
+    </div>
+  </div>
+  <p aria-hidden="true" class="hero-word display lowercase select-none">{word}</p>
+</section>
+
+<style>
+  .hero-word {
+    position: absolute;
+    pointer-events: none;
+    white-space: nowrap;
+    line-height: 0.8;
+    color: var(--color-ink);
+    /* Phone: a quarter turn, running down the right side, cut by three edges. */
+    writing-mode: vertical-rl;
+    font-size: 62vw;
+    right: -12vw;
+    top: 6rem;
+  }
+  @media (min-width: 768px) {
+    .hero-word {
+      writing-mode: horizontal-tb;
+      font-size: var(--text-display);
+      right: auto;
+      top: auto;
+      left: -8vw;
+      bottom: 0;
+      transform: translateY(6%);
+    }
+  }
+  /* The signature move: the word drifts and settles a little as the first screen scrolls away. */
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .hero-word {
+        animation: word-drift linear both;
+      }
+      .hero-word.hero-word {
+        animation-timeline: scroll(root);
+        animation-range: 0 100svh;
+      }
+      @media (min-width: 768px) {
+        .hero-word.hero-word {
+          animation-name: word-drift-wide;
+        }
+      }
+    }
+  }
+  @keyframes word-drift {
+    to {
+      transform: translateY(-12%) scale(0.94);
+    }
+  }
+  @keyframes word-drift-wide {
+    from {
+      transform: translateY(6%);
+    }
+    to {
+      transform: translate(-14vw, 6%) scale(0.94);
+    }
+  }
+</style>

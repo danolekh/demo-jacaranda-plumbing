@@ -1,0 +1,25 @@
+---
+import { serviceList } from "../data/site";
+---
+
+<!-- The capabilities, one per line, set large enough to be the picture of this section. -->
+<section id="services" class="frame pt-section" aria-labelledby="services-title">
+  <h2 id="services-title" class="rise text-lead font-medium text-soft">What we fix</h2>
+  <ul class="mt-8 md:mt-10">
+    {
+      serviceList.map((s, i) => (
+        <li class:list={["rise", i % 3 === 1 && "rise-2", i % 3 === 2 && "rise-3"]}>
+          <a
+            href={s.href}
+            class="group grid lg:grid-cols-[1fr_auto] items-baseline gap-x-8 py-2 md:py-1"
+          >
+            <span class="display text-head transition-[color,translate] duration-300 ease-out-quart group-hover:text-brass group-hover:translate-x-3 group-focus-visible:text-brass">
+              {s.name}
+            </span>
+            <span class="hidden lg:block text-lead text-soft">{s.note}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

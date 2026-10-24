@@ -1,0 +1,50 @@
+---
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { faqs } from "../data/site";
+
+interface Props {
+  keys: string[];
+  title?: string;
+  photo?: { image: ImageMetadata; alt: string; caption: string };
+}
+
+const { keys, title = "Before you call", photo } = Astro.props;
+const items = keys.map((k) => faqs[k]).filter(Boolean);
+---
+
+<!-- Questions and answers as reading text: every answer visible at a glance, no toggles. -->
+<section id="questions" class="frame pt-section" aria-labelledby="faq-title">
+  <div class="grid gap-8 md:grid-cols-12">
+    <div class="md:col-span-3">
+      <h2 id="faq-title" class="rise text-lead font-medium">{title}</h2>
+      {
+        photo && (
+          <figure class="rise rise-2 mt-8 max-md:hidden">
+            <Picture
+              src={photo.image}
+              alt={photo.alt}
+              widths={[300, 500, 700]}
+              sizes="22vw"
+              formats={["avif", "webp"]}
+              quality={60}
+              class="w-full aspect-[2/3] object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption class="mt-3 text-small text-soft">{photo.caption}</figcaption>
+          </figure>
+        )
+      }
+    </div>
+    <div class="rise rise-2 md:col-start-5 md:col-span-8 md:columns-2 md:gap-14">
+      {
+        items.map((item) => (
+          <p class="mb-5 md:mb-6 break-inside-avoid max-w-[40ch]">
+            <span class="font-medium">{item.q}</span> {item.a}
+          </p>
+        ))
+      }
+    </div>
+  </div>
+</section>

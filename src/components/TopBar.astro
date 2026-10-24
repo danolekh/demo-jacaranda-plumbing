@@ -1,0 +1,33 @@
+---
+import { business } from "../data/site";
+
+const links = [
+  { href: "/#services", label: "Services" },
+  { href: "/#suburbs", label: "Suburbs" },
+  { href: "/#prices", label: "Prices" },
+];
+---
+
+<header class="frame relative z-10 flex items-center justify-between gap-6 pt-5 md:pt-7 text-body">
+  <a href="/" class="font-medium" aria-label={`${business.name}, home`}>{business.name}</a>
+
+  <nav class="hidden md:flex items-center gap-7" aria-label="Main">
+    {links.map((l) => <a class="link no-underline hover:underline" href={l.href}>{l.label}</a>)}
+    <a class="link font-medium" href={business.phoneHref} data-call-location="header">{business.phone}</a>
+  </nav>
+
+  <!-- On phones the links fold behind one word. <details> needs no script. -->
+  <details class="md:hidden group relative">
+    <summary class="list-none cursor-pointer py-2 pl-4 font-medium [&::-webkit-details-marker]:hidden">
+      <span class="group-open:hidden">Menu</span><span class="hidden group-open:inline">Close</span>
+    </summary>
+    <nav
+      class="absolute right-0 top-full z-20 mt-2 w-60 bg-surface p-5 flex flex-col gap-4 text-lead"
+      aria-label="Main"
+    >
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a href="/tracking/">Tracking</a>
+      <a class="text-brass font-medium" href={business.phoneHref} data-call-location="menu">{business.phone}</a>
+    </nav>
+  </details>
+</header>

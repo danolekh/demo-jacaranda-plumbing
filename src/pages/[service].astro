@@ -1,0 +1,48 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import JobList from "../components/JobList.astro";
+import Note from "../components/Note.astro";
+import Steps from "../components/Steps.astro";
+import PriceTable from "../components/PriceTable.astro";
+import Faq from "../components/Faq.astro";
+import Contact from "../components/Contact.astro";
+import { prices, services, type Service, type PhotoKey } from "../data/site";
+import { photos } from "../data/photos";
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { service: service.slug }, props: { service } }));
+}
+
+const { service } = Astro.props as { service: Service };
+
+// This page's prices, with the call-out rows every job starts from.
+const rows = prices.filter((p) => p.service === service.slug || !p.service);
+// Two more pictures for the price and question sections, never the one the page already uses.
+const extras: { key: PhotoKey; alt: string; caption: string }[] = [
+  { key: "copperTorch", alt: "A blue torch flame soldering a joint on a copper pipe", caption: "Soldering a copper joint." },
+  { key: "jacaranda", alt: "Jacaranda trees in purple bloom in New Farm Park, Brisbane", caption: "Jacarandas in New Farm Park, in October." },
+  { key: "drainMachine", alt: "A plumber feeding a drain machine cable into a sewer access point", caption: "Clearing a sewer line with a drain machine." },
+];
+const [pricePhoto, faqPhoto] = extras
+  .filter((e) => e.key !== service.photo)
+  .map((e) => ({ image: photos[e.key], alt: e.alt, caption: e.caption }));
+const enquiryService = {
+  "hot-water-systems": "Hot water",
+  "blocked-drains": "Blocked drain",
+  "gas-fitting": "Gas fitting",
+  "emergency-plumber": "Leak or burst pipe",
+}[service.slug];
+---
+
+<Base title={service.title} description={service.description}>
+  <main>
+    <Hero word={service.word} h1={service.h1} lead={service.short} />
+    <JobList service={service} />
+    <Note heading="Worth knowing" text={service.statement} />
+    <Steps />
+    <PriceTable rows={rows} photo={pricePhoto} />
+    <Faq keys={service.faq} photo={faqPhoto} />
+    <Contact formId={service.slug} service={enquiryService} />
+  </main>
+</Base>

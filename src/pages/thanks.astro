@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import TopBar from "../components/TopBar.astro";
+import { business } from "../data/site";
+---
+
+<!-- Where the form lands when JavaScript is off: the Pages Function redirects here with ?ref= -->
+<Base title={`Thanks | ${business.name}`} description="We've got your enquiry." enquire="/#enquire">
+  <main class="min-h-[80svh]">
+    <TopBar />
+    <section class="frame pt-24 md:pt-36" aria-labelledby="thanks-title">
+      <h1 id="thanks-title" class="display text-head">Thanks, we've got it.</h1>
+      <p class="mt-6 text-lead max-w-[36ch]">
+        We'll ring you back within the hour, 7am to 7pm. <span data-ref></span>
+      </p>
+      <p class="mt-8">
+        Need us sooner?
+        <a class="link font-medium" href={business.phoneHref} data-call-location="thanks">Call {business.phone}</a>
+      </p>
+    </section>
+  </main>
+  <script>
+    const ref = new URLSearchParams(location.search).get("ref");
+    if (ref && /^JP-[A-Z0-9]{4,8}$/.test(ref)) {
+      document.querySelector("[data-ref]")!.textContent = `Your reference is ${ref}.`;
+    }
+  </script>
+</Base>

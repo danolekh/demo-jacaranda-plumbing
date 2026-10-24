@@ -1,0 +1,182 @@
+---
+import Base from "../layouts/Base.astro";
+import TopBar from "../components/TopBar.astro";
+import { business } from "../data/site";
+
+const events = [
+  { name: "click_to_call", when: "Any tap on a phone number: header, hero, sticky bar, contact, footer, menu", params: "call_location, phone_number", ga4: "Key event, Google Ads call conversion" },
+  { name: "generate_lead", when: "The server has stored an enquiry (not just a click on Send)", params: "form_id, service, suburb, enquiry_id", ga4: "Key event, Google Ads lead conversion" },
+  { name: "form_start", when: "First focus on an enquiry form", params: "form_id", ga4: "Funnel step" },
+  { name: "form_error", when: "A field is invalid or the send failed", params: "form_id, reason", ga4: "Diagnostics" },
+  { name: "suburb_check", when: "Someone checks their suburb", params: "suburb, serviced", ga4: "Audience signal" },
+];
+
+const example = `window.dataLayer.push({
+  event: "click_to_call",
+  call_location: "sticky_bar",
+  phone_number: "+61491570156",
+  page_path: "/blocked-drains/"
+});`;
+---
+
+<Base
+  title={`Tracking | ${business.name}`}
+  description="Every call tap and every enquiry on this site, counted, and where each count goes."
+  enquire="/#enquire"
+>
+  <main>
+    <TopBar />
+    <section class="frame pt-16 md:pt-28" aria-labelledby="tracking-title">
+      <h1 id="tracking-title" class="display text-head max-w-[14ch]">Every call and enquiry, counted</h1>
+      <p class="mt-6 text-lead max-w-[46ch]">
+        Tap a phone number or send an enquiry anywhere on this site, then come back here. Each one goes to the
+        dataLayer for Google Tag Manager, and to a server-side count that ad blockers can't hide.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row sm:items-center gap-x-7 gap-y-4">
+        <a class="btn self-start" href={business.phoneHref} data-call-location="tracking_page">Tap to call {business.phone}</a>
+        <a class="link self-start" href="/#enquire">Send a test enquiry</a>
+        <a class="link self-start" href="/#suburbs">Check a suburb</a>
+      </div>
+    </section>
+
+    <section class="frame pt-20 md:pt-28 grid gap-12 md:grid-cols-12" aria-label="Live counts">
+      <div class="md:col-span-7" data-ui>
+        <h2 class="text-lead font-medium">This visit</h2>
+        <p class="mt-2 text-soft">What this browser pushed to <code>window.dataLayer</code>, newest first.</p>
+        <ol data-log class="mt-6 flex flex-col gap-2"></ol>
+        <p data-log-empty class="mt-6 bg-surface p-5">Nothing yet. Tap the call button above, or check a suburb on the home page.</p>
+      </div>
+      <div class="md:col-span-5" data-ui>
+        <h2 class="text-lead font-medium">Every visitor so far</h2>
+        <p class="mt-2 text-soft">Counted by a Cloudflare Pages Function, read from KV.</p>
+        <dl data-stats class="mt-6 grid grid-cols-[1fr_auto] gap-x-6 gap-y-2 text-body"></dl>
+        <p data-stats-note class="mt-4 text-small text-soft">Loading...</p>
+      </div>
+    </section>
+
+    <section class="frame pt-section" aria-labelledby="events-title">
+      <h2 id="events-title" class="display text-head">The events</h2>
+      <div class="mt-10 overflow-x-auto">
+        <table class="w-full min-w-[44rem] border-collapse text-left">
+          <thead>
+            <tr class="text-small text-soft">
+              <th scope="col" class="font-normal px-3 pb-3">Event</th>
+              <th scope="col" class="font-normal px-3 pb-3">Fires when</th>
+              <th scope="col" class="font-normal px-3 pb-3">Parameters</th>
+              <th scope="col" class="font-normal px-3 pb-3">In GA4 and Ads</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              events.map((e) => (
+                <tr class="even:bg-surface align-top">
+                  <th scope="row" class="px-3 py-3.5 font-medium"><code>{e.name}</code></th>
+                  <td class="px-3 py-3.5">{e.when}</td>
+                  <td class="px-3 py-3.5 text-soft">{e.params}</td>
+                  <td class="px-3 py-3.5 text-soft">{e.ga4}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-16 grid gap-10 md:grid-cols-12">
+        <div class="md:col-span-5">
+          <h3 class="text-lead font-medium">Hooking it up</h3>
+          <p class="mt-4 max-w-[42ch]">
+            Put the client's Tag Manager ID in <code>src/data/site.ts</code>. In GTM, one Custom Event trigger per event name
+            sends a GA4 event with the same parameters; mark <code>click_to_call</code> and <code>generate_lead</code> as key
+            events and import them into Google Ads. Then compare the GA4 numbers with the server count on the right to see
+            how much the browser side misses.
+          </p>
+        </div>
+        <pre class="md:col-start-7 md:col-span-6 bg-surface p-5 overflow-x-auto text-small leading-relaxed"><code>{example}</code></pre>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<script>
+  import { LOG_KEY } from "../scripts/track";
+
+  type Entry = Record<string, unknown> & { event: string; at: string };
+
+  const list = document.querySelector<HTMLOListElement>("[data-log]")!;
+  const empty = document.querySelector<HTMLElement>("[data-log-empty]")!;
+
+  function row(entry: Entry) {
+    const li = document.createElement("li");
+    li.className = "bg-surface px-4 py-3 flex flex-col gap-1";
+    const head = document.createElement("div");
+    head.className = "flex justify-between gap-4";
+    const name = document.createElement("code");
+    name.className = "font-medium text-brass";
+    name.textContent = entry.event;
+    const time = document.createElement("span");
+    time.className = "text-small text-soft tabular-nums";
+    time.textContent = new Date(entry.at).toLocaleTimeString("en-AU");
+    head.append(name, time);
+    const params = Object.entries(entry)
+      .filter(([k]) => !["event", "at"].includes(k))
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(" · ");
+    const detail = document.createElement("span");
+    detail.className = "text-small text-soft break-words";
+    detail.textContent = params;
+    li.append(head, detail);
+    return li;
+  }
+
+  function render() {
+    let log: Entry[] = [];
+    try {
+      log = JSON.parse(sessionStorage.getItem(LOG_KEY) ?? "[]");
+    } catch {}
+    list.replaceChildren(...log.slice().reverse().map(row));
+    empty.hidden = log.length > 0;
+  }
+
+  async function stats() {
+    const dl = document.querySelector<HTMLElement>("[data-stats]")!;
+    const note = document.querySelector<HTMLElement>("[data-stats-note]")!;
+    try {
+      const res = await fetch("/api/stats", { headers: { accept: "application/json" } });
+      if (!res.ok) throw new Error(String(res.status));
+      const data = (await res.json()) as { totals: Record<string, number>; calls: Record<string, number> };
+      const lines: [string, number][] = [
+        ["Call taps", data.totals.click_to_call ?? 0],
+        ["Enquiries stored", data.totals.enquiry_stored ?? 0],
+        ["generate_lead events", data.totals.generate_lead ?? 0],
+        ["Forms started", data.totals.form_start ?? 0],
+        ["Suburb checks", data.totals.suburb_check ?? 0],
+        ...Object.entries(data.calls).map(([where, n]) => [`  calls from ${where.replace(/_/g, " ")}`, n] as [string, number]),
+      ];
+      dl.replaceChildren(
+        ...lines.flatMap(([label, n]) => {
+          const dt = document.createElement("dt");
+          dt.textContent = label.trim();
+          if (label.startsWith("  ")) dt.className = "pl-4 text-soft";
+          const dd = document.createElement("dd");
+          dd.className = "tabular-nums text-right font-medium";
+          dd.textContent = String(n);
+          return [dt, dd];
+        }),
+      );
+      note.textContent = "Updates when you come back to this page.";
+    } catch {
+      note.textContent = "The live counts need the deployed site (Cloudflare Pages Functions).";
+    }
+  }
+
+  render();
+  stats();
+  window.addEventListener("jp:track", () => {
+    render();
+    setTimeout(stats, 800);
+  });
+  window.addEventListener("pageshow", () => {
+    render();
+    stats();
+  });
+</script>

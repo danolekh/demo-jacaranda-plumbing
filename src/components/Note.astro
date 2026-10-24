@@ -1,0 +1,17 @@
+---
+interface Props {
+  heading: string;
+  text: string;
+}
+const { heading, text } = Astro.props;
+---
+
+<!-- One piece of advice set large on its own field of colour. -->
+<section class="mt-section bg-surface frame py-20 md:py-28" aria-labelledby="note-title">
+  <div class="grid gap-6 md:grid-cols-12">
+    <h2 id="note-title" class="rise md:col-span-3 text-lead font-medium text-brass">{heading}</h2>
+    <p class="rise rise-2 md:col-start-5 md:col-span-8 text-[clamp(1.5rem,1.1rem+1.2vw,2.25rem)] leading-[1.2] font-medium max-w-[32ch]">
+      {text}
+    </p>
+  </div>
+</section>

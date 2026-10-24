@@ -1,0 +1,24 @@
+---
+import { steps } from "../data/site";
+
+// Each line starts two columns further right than the one before, so the job reads as a staircase.
+const starts = ["md:col-start-1", "md:col-start-3", "md:col-start-5", "md:col-start-7"];
+const phoneIndent = ["pl-0", "pl-[6vw]", "pl-[12vw]", "pl-[18vw]"];
+---
+
+<section id="how" class="frame pt-section" aria-labelledby="how-title">
+  <ol class="grid md:grid-cols-12 gap-y-10 md:gap-y-14">
+    {
+      steps.map((step, i) => (
+        <li class:list={["md:col-span-6 md:pl-0", starts[i], phoneIndent[i]]}>
+          {i === 0 ? (
+            <h2 id="how-title" class="rise display text-head leading-none">{step.line}</h2>
+          ) : (
+            <p class:list={["rise display text-head leading-none", i === steps.length - 1 && "text-brass"]}>{step.line}</p>
+          )}
+          <p class="rise rise-2 mt-3 max-w-[34ch] text-soft">{step.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>
