@@ -15,7 +15,7 @@ const { word, h1, lead } = Astro.props;
 <!-- First screen: words, colour and space only. The word is too big for the screen on purpose. -->
 <section class="hero relative overflow-hidden min-h-svh md:min-h-[max(100svh,44rem)]">
   <TopBar />
-  <div class="frame relative z-10 pt-24 md:pt-16 max-w-[72%] md:max-w-none">
+  <div class="hero-copy frame relative z-10 pt-24 md:pt-16 max-w-[72%] md:max-w-none">
     <h1 class="text-[clamp(1.5rem,6.7vw,1.625rem)] md:text-head font-extrabold leading-[1.1] md:leading-[0.95] tracking-[-0.01em] md:tracking-[-0.035em]">{h1}</h1>
     <p class="mt-4 md:mt-5 max-w-[34ch]">{lead}</p>
     <div class="mt-8 flex flex-col md:flex-row md:items-center gap-x-7 gap-y-4">
@@ -51,6 +51,18 @@ const { word, h1, lead } = Astro.props;
       left: -8vw;
       bottom: 0;
       transform: translateY(6%);
+    }
+  }
+  /* Portrait tablets: the screen is far taller than the word, so the words sit in the middle of
+     the space above it instead of leaving one hole between the button and the word. */
+  @media (min-width: 768px) and (orientation: portrait) {
+    .hero {
+      display: flex;
+      flex-direction: column;
+      padding-bottom: calc(var(--text-display) * 0.8);
+    }
+    .hero-copy {
+      margin-block: auto;
     }
   }
   /* The signature move: the word drifts and settles a little as the first screen scrolls away. */
